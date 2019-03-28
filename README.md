@@ -1,3 +1,5 @@
 # CS350-Assignment4
 
-Sean Kunz
+Sean Kunz 
+
+Brian Grant
