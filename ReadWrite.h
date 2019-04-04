@@ -17,7 +17,7 @@ class ReadWrite {
 		int numWriters;
 		int numRandom;
 
-		//From Wikipedia
+		//From Wikipedia - subject to change
 		int readcount;
 		int writecount;
 		pthread_mutex_t rmutex;
