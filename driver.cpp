@@ -1,12 +1,30 @@
 #include "ReadWrite.h"
 
 void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
-	for (int i = 0; i < numReaders; i++) {
+	pthread_t rt[numReaders];
+	void *rtRetVals[numReaders];
+
+	pthread_t wt[numWriters];
+	void *wtRetVals[numWriters];
+	//pthread_t wt[numWriters];
+	int rtcount;
+	int wtcount;
+
+	//Make reader threads
+	for (rtcount = 0; rtcount < numReaders; rtcount++) {
 		//create reader threads
+		pthread_create(&rt[rtcount], NULL, ReadWrite::reader_helper, rw);
 	}
+	for (int i = 0; i < rtcount; i++) {
+		pthread_join(rt[i], &rtRetVals[i]);
+	}
+
+
+	/*
 	for (int i = 0; i < numWriters; i++) {
 		//create writer threads
-	}
+		//pthread_create(&wt[i], NULL, rw::writer_helper, rw);
+	}*/
 	//create "almost done thread"
 }
 
@@ -29,6 +47,6 @@ int main(int argc, char **argv) {
 
 	ReadWrite *rw = new ReadWrite (numReaders, numWriters, numRandom);
 	createThreads(rw, numReaders, numWriters);
-	delete(rw);
+	//delete(rw);
 	return 0;
 }

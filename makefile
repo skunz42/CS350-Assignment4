@@ -1,7 +1,7 @@
 all:	readwrite
 
 readwrite:	LLC.o ReadWrite.o driver.o
-	g++ LLC.o ReadWrite.o driver.o -o readwrite
+	g++ LLC.o ReadWrite.o driver.o -o readwrite -lpthread
 
 LLC.o:	LLC.cpp
 	g++ -g -Wall -std=c++11 -c LLC.cpp

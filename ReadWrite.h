@@ -8,9 +8,11 @@ using namespace std;
 class ReadWrite {
 	public:
 		ReadWrite(int, int, int);
+		static void * reader_helper(void *);
 		void reader();
 		void writer();
 		void almostDone();
+		pthread_mutex_t rmutex;
 	private:
 		LLC *l;
 		int numReaders;
@@ -20,7 +22,7 @@ class ReadWrite {
 		//From Wikipedia - subject to change
 		int readcount;
 		int writecount;
-		pthread_mutex_t rmutex;
+		//pthread_mutex_t rmutex;
 		pthread_mutex_t wmutex;
 		pthread_mutex_t readTry;
 		pthread_mutex_t resource;
