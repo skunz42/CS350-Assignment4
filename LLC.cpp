@@ -43,6 +43,20 @@ void LLC::view() {
 	}
 }
 
+int LLC::countEnd(int num) {
+	Node *pos = first;
+	int count = 0;
+	int modval;
+	while (pos != NULL) {
+		modval = (pos->data)%10;
+		if (num == modval) {
+			count++;
+		}
+		pos = pos->next;
+	}
+	return count;
+}
+
 int LLC::getLen() {
 	Node *pos = first;
 	int len = 0;

@@ -15,6 +15,7 @@ class LLC {
 		~LLC();
 		void insert(int);
 		void view();
+		int countEnd(int);
 		int getLen();
 	private:
 		Node *first;
