@@ -6,7 +6,7 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 
 	pthread_t wt[numWriters];
 	void *wtRetVals[numWriters];
-	//pthread_t wt[numWriters];
+
 	int rtcount;
 	int wtcount;
 
@@ -19,12 +19,13 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 		pthread_join(rt[i], &rtRetVals[i]);
 	}
 
-
-	/*
-	for (int i = 0; i < numWriters; i++) {
+	for (wtcount = 0; wtcount < numWriters; wtcount++) {
 		//create writer threads
-		//pthread_create(&wt[i], NULL, rw::writer_helper, rw);
-	}*/
+		pthread_create(&wt[wtcount], NULL, ReadWrite::writer_helper, rw);
+	}
+	for (int i = 0; i < wtcount; i++) {
+		pthread_join(wt[i], &wtRetVals[i]);
+	}
 	//create "almost done thread"
 }
 
