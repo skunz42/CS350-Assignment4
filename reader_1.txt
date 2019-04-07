@@ -1,0 +1,7 @@
+Reader 1: Read 1: 0 values ending in 1
+Reader 1: Read 2: 1 values ending in 1
+Reader 1: Read 3: 1 values ending in 1
+Reader 1: Read 4: 1 values ending in 1
+Reader 1: Read 5: 1 values ending in 1
+Reader 1: Read 6: 1 values ending in 1
+Reader 1: Read 7: 1 values ending in 1

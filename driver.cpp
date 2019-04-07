@@ -11,14 +11,7 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 	int rtcount;
 	int wtcount;
 ///*
-	for (wtcount = 0; wtcount < numWriters; wtcount++) {
-		//create struct to pass params to thread
- 		Param *p = (Param *)malloc(sizeof(Param));
-		p->threadNum = wtcount+1;
-		p->rw = rw;
-		//create writer threads
-		pthread_create(&wt[wtcount], NULL, ReadWrite::writer_helper, p);
-	}
+
 
 	//Make reader threads
 	for (rtcount = 0; rtcount < numReaders; rtcount++) {
@@ -28,6 +21,15 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 		p->rw = rw;
 		//create reader threads
 		pthread_create(&rt[rtcount], NULL, ReadWrite::reader_helper, p);
+	}
+	
+	for (wtcount = 0; wtcount < numWriters; wtcount++) {
+		//create struct to pass params to thread
+ 		Param *p = (Param *)malloc(sizeof(Param));
+		p->threadNum = wtcount+1;
+		p->rw = rw;
+		//create writer threads
+		pthread_create(&wt[wtcount], NULL, ReadWrite::writer_helper, p);
 	}
 //*/	
 

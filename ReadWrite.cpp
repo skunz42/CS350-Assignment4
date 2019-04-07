@@ -31,75 +31,82 @@ void * ReadWrite::writer_helper(void * context) {
 }
 
 void ReadWrite::reader(int rNum) {
-	
-	
-	//Each R reader should inspect the LinkedList N times
-	//print number of values ending in R
-	//write to file for each R reader
-	sem_wait(&readTry);
-	sem_wait(&rmutex);
-	readcount++;
-	if(readcount == 1) {
-		sem_wait(&resource);
-	}
-	sem_post(&rmutex);
-	sem_post(&readTry);
-	//crit sect
-	cout << "reader " << rNum << endl;
-	int countEnd;	
 	for(int i = 0; i < this->numRandom; i++){
-		countEnd = this->l->countEnd(rNum);
+	
+		//Each R reader should inspect the LinkedList N times
+		//print number of values ending in R
+		//write to file for each R reader
+		sem_wait(&readTry);
+		sem_wait(&rmutex);
+		readcount++;
+		if(readcount == 1) {
+			sem_wait(&resource);
+		}
+		sem_post(&rmutex);
+		sem_post(&readTry);
+		//crit sect
+		cout << "reader " << rNum << endl;
+		
+		int countEnd = this->l->countEnd(rNum);
+		cout << "countEnd " << countEnd << endl;
 		this->results[rNum-1][i] = countEnd;
 		//this->l->view();
 		//cout << "Reader " << rNum << ": Read " << i << ": " << countEnd;
-	}
 	
-	sem_wait(&rmutex);
-	readcount--;
-	if(readcount == 0) {
-		sem_post(&resource);
-	}
-	sem_post(&rmutex);
 	
+		sem_wait(&rmutex);
+		readcount--;
+		if(readcount == 0) {
+			sem_post(&resource);
+		}
+		sem_post(&rmutex);
+	}
 }
 
 void ReadWrite::writer(int wNum) {
-	//sleep(1);
+	for(int i = 0; i < this->numRandom; i++){
+	
+		//sleep(1);
 
-	//Each W writer should add N randomly generated numbers to the list
-	//Sleep for a few seconds in between writes
-	int randNum;
+		//Each W writer should add N randomly generated numbers to the list
+		//Sleep for a few seconds in between writes
+		int randNum;
 	
-	sem_wait(&wmutex);
-	writecount++;
-	if(writecount == 1) {
-		sem_wait(&readTry);
-	}
-	sem_post(&wmutex);
-	
-	sem_wait(&resource);
-	//crit
-	cout << "writer " << wNum << endl;
-	for(int i = 0; i < this->numRandom; i++){	
+		sem_wait(&wmutex);
+		writecount++;
+		if(writecount == 1) {
+			sem_wait(&readTry);
+		}
+		sem_post(&wmutex);
+		
+		sem_wait(&resource);
+		//crit
+		cout << "writer " << wNum << endl;
+		
 		randNum = rand()%(100) + 1;	
 		while(randNum%10 != wNum){
 			randNum = rand()%(100) + 1;	
 		}
 		//cout << randNum << endl;
 		this->l->insert(randNum);
-		sleep(1);
-	}
-	//this->l->view();
+		
+		this->l->view();
+		
 	
-	//endcrit
-	sem_post(&resource);
+		//endcrit
+		sem_post(&resource);
 
-	sem_wait(&wmutex);
-	writecount--;
-	if(writecount == 0) {
-		sem_post(&readTry);
+		sem_wait(&wmutex);
+		writecount--;
+		if(writecount == 0) {
+			sem_post(&readTry);
+		}
+		sem_post(&wmutex);
+		
+		
+		
+		sleep(2);
 	}
-	sem_post(&wmutex);
 }
 
 void ReadWrite::almostDone() {
