@@ -14,3 +14,6 @@ driver.o:	driver.cpp
 
 clean:
 	rm -f *.o readwrite
+
+cleantxt:
+	rm -f *.txt
