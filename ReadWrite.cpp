@@ -10,10 +10,10 @@ ReadWrite::ReadWrite(int nr, int nw, int nrand) {
 	numReaders = nr;
 	numWriters = nw;
 	numRandom = nrand;
-	sem_init(&rmutex, 0, 1);
-	sem_init(&wmutex, 0, 1);
-	sem_init(&readTry, 0, 1);
-	sem_init(&resource, 0, 1);
+	rmutex = PTHREAD_MUTEX_INITIALIZER;
+	wmutex = PTHREAD_MUTEX_INITIALIZER;
+	readTry = PTHREAD_MUTEX_INITIALIZER;
+	resource = PTHREAD_MUTEX_INITIALIZER;
 	pthread_cond_init(&oneLeft, NULL);
 	readcount=0;
 	writecount=0;
@@ -37,14 +37,14 @@ void ReadWrite::reader(int rNum) {
 		//Each R reader should inspect the LinkedList N times
 		//print number of values ending in R
 		//write to file for each R reader
-		sem_wait(&readTry);
-		sem_wait(&rmutex);
+		pthread_mutex_lock(&readTry);
+		pthread_mutex_lock(&rmutex);
 		readcount++;
 		if(readcount == 1) {
-			sem_wait(&resource);
+			pthread_mutex_lock(&resource);
 		}
-		sem_post(&rmutex);
-		sem_post(&readTry);
+		pthread_mutex_unlock(&rmutex);
+		pthread_mutex_unlock(&readTry);
 		//crit sect
 		cout << "reader " << rNum << endl;
 		
@@ -55,12 +55,12 @@ void ReadWrite::reader(int rNum) {
 		//cout << "Reader " << rNum << ": Read " << i << ": " << countEnd;
 	
 	
-		sem_wait(&rmutex);
+		pthread_mutex_lock(&rmutex);
 		readcount--;
 		if(readcount == 0) {
-			sem_post(&resource);
+			pthread_mutex_unlock(&resource);
 		}
-		sem_post(&rmutex);
+		pthread_mutex_unlock(&rmutex);
 		sleep(1);
 		
 	}
@@ -76,14 +76,14 @@ void ReadWrite::writer(int wNum) {
 		//Sleep for a few seconds in between writes
 		int randNum;
 	
-		sem_wait(&wmutex);
+		pthread_mutex_lock(&wmutex);
 		writecount++;
 		if(writecount == 1) {
-			sem_wait(&readTry);
+			pthread_mutex_lock(&readTry);
 		}
-		sem_post(&wmutex);
+		pthread_mutex_unlock(&wmutex);
 		
-		sem_wait(&resource);
+		pthread_mutex_lock(&resource);
 		//crit
 		cout << "writer " << wNum << endl;
 		
@@ -98,14 +98,14 @@ void ReadWrite::writer(int wNum) {
 		
 	
 		//endcrit
-		sem_post(&resource);
+		pthread_mutex_unlock(&resource);
 
-		sem_wait(&wmutex);
+		pthread_mutex_lock(&wmutex);
 		writecount--;
 		if(writecount == 0) {
-			sem_post(&readTry);
+			pthread_mutex_unlock(&readTry);
 		}
-		sem_post(&wmutex);
+		pthread_mutex_unlock(&wmutex);
 		
 		//this_thread::sleep_for(std::chrono::milliseconds(3333));
 		this_thread::sleep_for(std::chrono::seconds(1));

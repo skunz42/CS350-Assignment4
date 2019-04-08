@@ -2,7 +2,7 @@
 #include <iostream>
 #include <pthread.h>
 #include "LLC.h"
-#include <semaphore.h>
+//#include <semaphore.h>
 #include <ctime>
 #include <unistd.h>
 #include <fstream>
@@ -26,10 +26,10 @@ class ReadWrite {
 		void almostDone();
 		void printResults();
 		void writeToFiles();
-		sem_t rmutex;
-		sem_t wmutex;
-		sem_t readTry;
-		sem_t resource;
+		pthread_mutex_t rmutex;
+		pthread_mutex_t wmutex;
+		pthread_mutex_t readTry;
+		pthread_mutex_t resource;
 	  
 		pthread_cond_t oneLeft;	
 	
