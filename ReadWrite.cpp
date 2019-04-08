@@ -31,7 +31,11 @@ void * ReadWrite::writer_helper(void * context) {
 }
 
 void ReadWrite::reader(int rNum) {
-	
+		
+	int randNum;	
+	struct timespec tim, tim2;
+   	tim.tv_sec =0;
+   	tim.tv_nsec = 250000000;
 	for(int i = 0; i < this->numRandom; i++){
 	
 		//Each R reader should inspect the LinkedList N times
@@ -46,10 +50,10 @@ void ReadWrite::reader(int rNum) {
 		pthread_mutex_unlock(&rmutex);
 		pthread_mutex_unlock(&readTry);
 		//crit sect
-		cout << "reader " << rNum << endl;
+		//cout << "reader " << rNum << endl;
 		
 		int countEnd = this->l->countEnd(rNum);
-		cout << "countEnd " << countEnd << endl;
+		//cout << "countEnd " << countEnd << endl;
 		this->results[rNum-1][i] = countEnd;
 		//this->l->view();
 		//cout << "Reader " << rNum << ": Read " << i << ": " << countEnd;
@@ -61,14 +65,29 @@ void ReadWrite::reader(int rNum) {
 			pthread_mutex_unlock(&resource);
 		}
 		pthread_mutex_unlock(&rmutex);
-		sleep(1);
+		//sleep(1);
+		/*		
+		randNum = rand()%(100) + 1;	
+		if(randNum <= 20){		
+			nanosleep(&tim , &tim2);
+		}
+		else{
+			tim.tv_nsec = 750000000;
+			nanosleep(&tim , &tim2);
+		}
+		*/
+		tim.tv_nsec = rand();
+		nanosleep(&tim , &tim2);
 		
 	}
 }
 
 void ReadWrite::writer(int wNum) {
-		
-	for(int i = 0; i < this->numRandom; i++){
+	struct timespec tim, tim2;
+   	tim.tv_sec = 0;
+   	tim.tv_nsec = 250000000;
+
+  	for(int i = 0; i < this->numRandom; i++){
 	
 		//sleep(1);
 
@@ -85,7 +104,7 @@ void ReadWrite::writer(int wNum) {
 		
 		pthread_mutex_lock(&resource);
 		//crit
-		cout << "writer " << wNum << endl;
+		//cout << "writer " << wNum << endl;
 		
 		randNum = rand()%(100) + 1;	
 		while(randNum%10 != wNum){
@@ -94,7 +113,7 @@ void ReadWrite::writer(int wNum) {
 		//cout << randNum << endl;
 		this->l->insert(randNum);
 		
-		this->l->view();
+		//this->l->view();
 		
 	
 		//endcrit
@@ -108,8 +127,8 @@ void ReadWrite::writer(int wNum) {
 		pthread_mutex_unlock(&wmutex);
 		
 		//this_thread::sleep_for(std::chrono::milliseconds(3333));
-		this_thread::sleep_for(std::chrono::seconds(1));
-		
+		//this_thread::sleep_for(std::chrono::seconds(1));
+		nanosleep(&tim , &tim2);
 		//sleep(2);
 	}
 }

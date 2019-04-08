@@ -10,7 +10,7 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 
 	int rtcount;
 	int wtcount;
-///*
+/*
 
 
 	//Make reader threads
@@ -35,25 +35,64 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 		//create writer threads
 		pthread_create(&wt[wtcount], NULL, ReadWrite::writer_helper, p);
 	}
-//*/	
+*/	
 
 	//sleep(4);
-/*
+	bool readerGreater = numReaders > numWriters; 
 	//experiment
-	for (rtcount = 0; rtcount < numReaders; rtcount++) {
-		//create struct to pass params to thread
-		Param *p = (Param *)malloc(sizeof(Param));
-		p->threadNum = rtcount+1;
-		p->rw = rw;
-		//create reader threads
-		pthread_create(&rt[rtcount], NULL, ReadWrite::reader_helper, p);
-		pthread_create(&wt[rtcount], NULL, ReadWrite::writer_helper, p);
-	}
-*/	
 	
+	if(readerGreater){	
+		for (rtcount = 0; rtcount < numReaders; rtcount++) {
+			//create struct to pass params to thread
+			Param *p = (Param *)malloc(sizeof(Param));
+			p->threadNum = rtcount+1;
+			p->rw = rw;
+			//create reader threads
+			pthread_create(&rt[rtcount], NULL, ReadWrite::reader_helper, p);
+			if(rtcount < numWriters){			
+				pthread_create(&wt[rtcount], NULL, ReadWrite::writer_helper, p);
+			}
+		}
+	} else{
+		for (wtcount = 0; wtcount < numWriters; wtcount++) {
+			//create struct to pass params to thread
+			Param *p = (Param *)malloc(sizeof(Param));
+			p->threadNum = wtcount+1;
+			p->rw = rw;
+			//create reader threads
+			pthread_create(&wt[wtcount], NULL, ReadWrite::writer_helper, p);			
+			if(wtcount < numReaders){			
+				pthread_create(&rt[wtcount], NULL, ReadWrite::reader_helper, p);
+			}
+		}
 
 	
+	}
+
 	
+
+	if(readerGreater){
+		for (int i = 0; i < rtcount; i++) {		
+			pthread_join(rt[i], &rtRetVals[i]);
+			if(i < numWriters){
+				pthread_join(wt[i], &wtRetVals[i]);
+			}
+		}
+		
+	} else {
+		for (int i = 0; i < wtcount; i++) {		
+			pthread_join(wt[i], &wtRetVals[i]);
+			if(i < numReaders){
+				pthread_join(rt[i], &rtRetVals[i]);
+			}
+		}
+
+	}
+	
+	
+
+/*
+
 	for (int i = 0; i < rtcount; i++) {
 		pthread_join(rt[i], &rtRetVals[i]);
 	}	
@@ -61,17 +100,17 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 	for (int i = 0; i < wtcount; i++) {   
 		pthread_join(wt[i], &wtRetVals[i]);
 	}
-
+*/
 	//create "almost done thread"
 }
 
 int main(int argc, char **argv) {
 	
-	struct { int i, j; } a, b;
-	struct { int i, j; } c, d;
+	//struct { int i, j; } a, b;
+	//struct { int i, j; } c, d;
 	//a=b;
 	//b=c;
-	c=d;
+	//c=d;
 	//c=b;
 
 	int numRandom = atoi(argv[1]);
@@ -94,7 +133,7 @@ int main(int argc, char **argv) {
 
 	ReadWrite *rw = new ReadWrite (numReaders, numWriters, numRandom);
 	createThreads(rw, numReaders, numWriters);
-	rw->printResults();
+	//rw->printResults();
 	rw->writeToFiles();
 	//delete(rw);
 	return 0;
