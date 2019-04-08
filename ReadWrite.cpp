@@ -31,6 +31,7 @@ void * ReadWrite::writer_helper(void * context) {
 }
 
 void ReadWrite::reader(int rNum) {
+	
 	for(int i = 0; i < this->numRandom; i++){
 	
 		//Each R reader should inspect the LinkedList N times
@@ -60,10 +61,13 @@ void ReadWrite::reader(int rNum) {
 			sem_post(&resource);
 		}
 		sem_post(&rmutex);
+		sleep(1);
+		
 	}
 }
 
 void ReadWrite::writer(int wNum) {
+		
 	for(int i = 0; i < this->numRandom; i++){
 	
 		//sleep(1);
@@ -103,9 +107,10 @@ void ReadWrite::writer(int wNum) {
 		}
 		sem_post(&wmutex);
 		
+		//this_thread::sleep_for(std::chrono::milliseconds(3333));
+		this_thread::sleep_for(std::chrono::seconds(1));
 		
-		
-		sleep(2);
+		//sleep(2);
 	}
 }
 

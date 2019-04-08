@@ -23,6 +23,10 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 		pthread_create(&rt[rtcount], NULL, ReadWrite::reader_helper, p);
 	}
 	
+	
+	
+	
+	
 	for (wtcount = 0; wtcount < numWriters; wtcount++) {
 		//create struct to pass params to thread
  		Param *p = (Param *)malloc(sizeof(Param));
@@ -48,12 +52,13 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 */	
 	
 
-
+	
+	
 	for (int i = 0; i < rtcount; i++) {
 		pthread_join(rt[i], &rtRetVals[i]);
 	}	
 	
-	for (int i = 0; i < rtcount; i++) {   // changes wt to rt for experiment
+	for (int i = 0; i < wtcount; i++) {   
 		pthread_join(wt[i], &wtRetVals[i]);
 	}
 
@@ -61,6 +66,14 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 }
 
 int main(int argc, char **argv) {
+	
+	struct { int i, j; } a, b;
+	struct { int i, j; } c, d;
+	//a=b;
+	//b=c;
+	c=d;
+	//c=b;
+
 	int numRandom = atoi(argv[1]);
 	int numReaders = atoi(argv[2]);
 	int numWriters = atoi(argv[3]);
