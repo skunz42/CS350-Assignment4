@@ -12,9 +12,6 @@
 
 using namespace std;
 
-
-
-
 class ReadWrite {
 	public:
 		ReadWrite(int, int, int);
@@ -29,8 +26,8 @@ class ReadWrite {
 		pthread_mutex_t wmutex;
 		pthread_mutex_t readTry;
 		pthread_mutex_t resource;
-	  
-		pthread_cond_t oneLeft;	
+
+		pthread_cond_t oneLeft;
 	
 		int** results;
  
@@ -43,7 +40,7 @@ class ReadWrite {
 		//From Wikipedia - subject to change
 		int readcount;
 		int writecount;
-		
+		int activeNumReaders;
 };
 
 

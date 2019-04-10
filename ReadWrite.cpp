@@ -17,7 +17,7 @@ ReadWrite::ReadWrite(int nr, int nw, int nrand) {
 	pthread_cond_init(&oneLeft, NULL);
 	readcount=0;
 	writecount=0;
-
+	activeNumReaders = nr;
 }
 
 void * ReadWrite::reader_helper(void * context) {
@@ -31,8 +31,7 @@ void * ReadWrite::writer_helper(void * context) {
 }
 
 void ReadWrite::reader(int rNum) {
-		
-	int randNum;	
+	//int randNum;	
 	struct timespec tim, tim2;
    	tim.tv_sec =0;
    	tim.tv_nsec = 250000000;
@@ -70,9 +69,16 @@ void ReadWrite::reader(int rNum) {
 		}
 		*/
 		tim.tv_nsec = rand();
-		nanosleep(&tim , &tim2);
-		
+		nanosleep(&tim , &tim2);		
 	}
+
+	
+	pthread_mutex_lock(&rmutex);
+	activeNumReaders--;
+	if (activeNumReaders == 1) {
+		pthread_cond_signal(&oneLeft);
+	}
+	pthread_mutex_unlock(&rmutex);
 }
 
 void ReadWrite::writer(int wNum) {
@@ -119,6 +125,12 @@ void ReadWrite::writer(int wNum) {
 void ReadWrite::almostDone() {
 	//print out almost done when there is only a single reader list
 	//use a condition variable
+	pthread_mutex_lock(&rmutex);
+	while (activeNumReaders > 1) {
+		pthread_cond_wait(&oneLeft, &rmutex);
+	}
+	cout << "Almost Done!" << endl;
+	pthread_mutex_unlock(&rmutex);
 }
 
 void ReadWrite::printResults(){
