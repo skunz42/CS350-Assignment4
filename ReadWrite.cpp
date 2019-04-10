@@ -1,3 +1,4 @@
+//Written by big brains anonymous
 #include "ReadWrite.h"
 
 ReadWrite::ReadWrite(int nr, int nw, int nrand) {
