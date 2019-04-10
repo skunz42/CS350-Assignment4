@@ -2,7 +2,6 @@
 #include <iostream>
 #include <pthread.h>
 #include "LLC.h"
-//#include <semaphore.h>
 #include <ctime>
 #include <unistd.h>
 #include <fstream>
