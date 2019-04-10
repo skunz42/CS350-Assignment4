@@ -17,6 +17,7 @@ class ReadWrite {
 		ReadWrite(int, int, int);
 		static void * reader_helper(void *);
 		static void * writer_helper(void *);
+		static void * almostDone_helper(void *);
 		void reader(int);
 		void writer(int);
 		void almostDone();

@@ -31,6 +31,11 @@ void * ReadWrite::writer_helper(void * context) {
 	return NULL;
 }
 
+void * ReadWrite::almostDone_helper(void * context) {
+	((ReadWrite *)context)->almostDone();
+	return NULL;
+}
+
 void ReadWrite::reader(int rNum) {
 	//int randNum;	
 	struct timespec tim, tim2;

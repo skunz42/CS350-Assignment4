@@ -7,10 +7,12 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 	pthread_t wt[numWriters];
 	void *wtRetVals[numWriters];
 
+	pthread_t adthread;
+
 	int rtcount;
 	int wtcount;
 
-	bool readerGreater = numReaders > numWriters; 
+	bool readerGreater = numReaders > numWriters;
 	
 	if(readerGreater){	
 		for (rtcount = 0; rtcount < numReaders; rtcount++) {
@@ -39,7 +41,7 @@ void createThreads(ReadWrite *rw, int numReaders, int numWriters) {
 	}
 
 	//create "almost done thread"
-	rw->almostDone();
+	pthread_create(&adthread, NULL, &ReadWrite::almostDone_helper, rw);
 
 	if(readerGreater){
 		for (int i = 0; i < rtcount; i++) {		
